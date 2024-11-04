@@ -6,7 +6,8 @@ using Random
 
 struct State
     pos::Vector{2, Int}
-    map::Array{2, Int}
+    qual_map::Array{2, Int}
+    conf_map::Array{2, Int}
     occupied::bool
     collected::Int
 end
@@ -14,28 +15,31 @@ end
 @with_kw struct SamplePOMDP <: POMDP{State, Int, Int} # {S type, A type, O type}
     map_size::Tuple{Int, Int} = (7, 7)
     init_pos::Vector{2, Int} = (4, 4)
-    init_map::Array{2, Int} = rand()
-    #terminal_state
+    true_map::Array{2, Int} = rand(-10:10, map_size...) # true quality map (unknown)
+    qual_map = zeros(Int, map_size...) # uniform prior (true + noise?)
+    conf_map = zeros(Int, map_size...) # uniform prior
 
     # Reward
     move_penalty::Float64 = -1.
     scoop_penalty::Float64 = -10.
-    accept_valid_reward::Float64 = 10e3
-    accept_invalid_penality::Float64 = -10e5
-    reject_valid_reward::Float64 = -10e2
-    reject_invalid_penality::Float64 = -10.
+    accept_good_reward::Float64 = 10e3
+    accept_bad_penalty::Float64 = -10e5
+    reject_good_reward::Float64 = -10e2
+    reject_bad_penalty::Float64 = -10.
 
     # Misc.
-    discount::Float64 = 0.9
+    discount::Float64 = 0.95
     #indices
-    #sensor_efficiency
 end
 
 function GenerateMap()
+    # TODO: uniform prior (or true_map + noise?)
 end
 
 function GeneratePOMDP()
 end
+
+# TODO: terminate when collected = 3
 
 include("states.jl")
 include("actions.jl")
