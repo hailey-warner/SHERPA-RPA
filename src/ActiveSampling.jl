@@ -12,12 +12,12 @@ struct State
     collected::Int
 end
 
-@with_kw struct SamplePOMDP <: POMDP{State, Int, Int} # {S type, A type, O type}
+@with_kw struct SampleMDP <: MDP{State, Int, Int} # {S type, A type, O type}
     map_size::Tuple{Int, Int} = (7, 7)
     init_pos::Vector{2, Int} = (4, 4)
     true_map::Array{2, Int} = rand(-10:10, map_size...) # true quality map (unknown)
-    qual_map = zeros(Int, map_size...) # uniform prior (true + noise?)
-    conf_map = zeros(Int, map_size...) # uniform prior
+    qual_map:: Array{2, Int} = zeros(Int, map_size...) # uniform prior (true + noise?)
+    conf_map:: Array{2, Int} = zeros(Int, map_size...) # uniform prior
 
     # Reward
     move_penalty::Float64 = -1.

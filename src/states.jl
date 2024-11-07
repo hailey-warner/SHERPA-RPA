@@ -1,0 +1,1 @@
+POMDPs.states(mdp::SampleMDP) = mdp

@@ -6,3 +6,6 @@ const ACTIONS_DICT = Dict(:left   => 1,
                           :scoop  => 5,
                           :accept => 6,
                           :reject => 7)
+
+POMDPs.actions(mdp::SampleMDP) = 1:N_ACTIONS
+
