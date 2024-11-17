@@ -3,43 +3,47 @@ module ActiveSampling
 using POMDPs
 using Parameters
 using Random
+using StaticArrays
+
+const NOISE_LEVEL = 0.1 #camera/sensor noise
+export CreateSamplePOMDP
+export SamplePOMDP
+export State
 
 struct State
-    pos::Vector{2, Int}
-    qual_map::Array{2, Int}
-    conf_map::Array{2, Int}
-    occupied::bool
-    collected::Int
+    pos::SVector{2, Int}        # robotic arm's position
+    full::Bool                  # whether scoop is full or empty
+    collected::Int              # number of samples collected (0-3)
+    belief_map::Array{Bool, 2}  # belief map of good and bad sample locations
 end
 
-@with_kw struct SampleMDP <: MDP{State, Int, Int} # {S type, A type, O type}
-    map_size::Tuple{Int, Int} = (7, 7)
-    init_pos::Vector{2, Int} = (4, 4)
-    true_map::Array{2, Int} = rand(-10:10, map_size...) # true quality map (unknown)
-    qual_map:: Array{2, Int} = zeros(Int, map_size...) # uniform prior (true + noise?)
-    conf_map:: Array{2, Int} = zeros(Int, map_size...) # uniform prior
+@with_kw struct SamplePOMDP <: POMDP{State, Int, Int}
+    map_size::Tuple{Int, Int} = (3, 3)
+    init_pos::SVector{2, Int} = (2, 2)
+
+    true_map::Array{Bool, 2} = rand(Bool, map_size...)  # ground truth quality map (1 = good, 0 = bad)
+    #belief_map::Array{Bool, 2} = true_map .⊻ (rand(map_size) .< NOISE_LEVEL) # belief map (1 = good, 0 = bad)
+    #belief_map::Array{Bool, 2} = [Beta(1.0, 1.0) for i in 1:n, j in 1:m] # belief map (Beta dist.)
 
     # Reward
-    move_penalty::Float64 = -1.
-    scoop_penalty::Float64 = -10.
+    move_penalty::Float64       = -1.
+    scoop_penalty::Float64      = -10.
     accept_good_reward::Float64 = 10e3
     accept_bad_penalty::Float64 = -10e5
     reject_good_reward::Float64 = -10e2
     reject_bad_penalty::Float64 = -10.
 
     # Misc.
-    discount::Float64 = 0.95
-    #indices
+    terminal_state::State = State((-1,-1), false, 3, Matrix{Bool}(undef, map_size...))
+    discount_factor::Float64 = 0.95
 end
 
-function GenerateMap()
-    # TODO: uniform prior (or true_map + noise?)
+function CreateSamplePOMDP()
+    return SamplePOMDP()
 end
 
-function GeneratePOMDP()
-end
-
-# TODO: terminate when collected = 3
+POMDPs.isterminal(pomdp::SamplePOMDP, s::State) = s.collected == pomdp.terminal_state.collected # finished collecting?
+POMDPs.discount(pomdp::SamplePOMDP) = pomdp.discount_factor
 
 include("states.jl")
 include("actions.jl")
