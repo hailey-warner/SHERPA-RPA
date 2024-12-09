@@ -53,7 +53,7 @@ POMDPs.stateindex(m::PowerManagementPOMDP, s::Int) = s+1
 POMDPs.actionindex(m::PowerManagementPOMDP,a::Int) = a+1
 POMDPs.obsindex(m::PowerManagementPOMDP, s::Int) = s+1
 
-POMDPs.initialstate(m::PowerManagementPOMDP) = Deterministic(0)
+POMDPs.initialstate(m::PowerManagementPOMDP) = Uniform(0:m.battery_cp)
 
 # Function to get a binary representation with a fixed number of digits
 function to_fixed_binary(n::Int, num_digits::Int)
