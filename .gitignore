@@ -1,5 +1,5 @@
 *.pomdpx
 *.out
-*/sandbox
+*sandbox
 *figure
 *.DS_Store
