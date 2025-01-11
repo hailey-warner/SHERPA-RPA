@@ -1,3 +1,6 @@
+import Pkg
+Pkg.add("~/hlwarner/SISL/SHERPA-RPA/MoonSampling")
+
 using POMDPs
 using POMDPTools
 using StaticArrays
@@ -9,16 +12,15 @@ using MCTS
 using DiscreteValueIteration
 using SARSOP
 using Plots
-using moon # module
-
+using MoonSampling # user-defined package
 Random.seed!(84)
 
 # Example usage
 function simulate_policy(mdp, policy, truth_map; max_steps=30)
     s = ExtractionState([1, 1], false, 0, [1,1], [1,1])  # initial state
-    total_reward = 0.0
+    reward = 0.0
     steps = 0
-    cumulative_rewards = Float64[]
+    total_reward = Float64[]
     
     while !isterminal(mdp, s) && steps < max_steps
         steps += 1
@@ -26,9 +28,9 @@ function simulate_policy(mdp, policy, truth_map; max_steps=30)
         sp = rand(transition(mdp, s, a))
         r = reward(mdp, s, a)
         println("State: pos=$(s.pos), full=$(s.full), collected=$(s.collected) → Action: $a → Reward: $r")
-        total_reward += r
+        reward += r
         s = sp
-        push!(cumulative_rewards, total_reward)
+        push!(total_reward, reward)
         push!(maps_over_time, truth_map)
         push!(pos_over_time, s.pos)
         push!(action_over_time, a)
@@ -36,11 +38,11 @@ function simulate_policy(mdp, policy, truth_map; max_steps=30)
     if steps >= max_steps
         println("Simulation stopped after reaching max_steps.")
     end
-    println("Final state: pos=$(s.pos), full=$(s.full), collected=$(s.collected)")
-    println("Total reward: $total_reward")
-    push!(final_rewards, total_reward)
+    #println("Final state: pos=$(s.pos), full=$(s.full), collected=$(s.collected)")
+    println("Reward: $reward")``
+    push!(reward_over_time, reward)
 
-    plot!(cumulative_rewards, linewidth=2, alpha=0.7, xlims=(0,10))
+    plot!(total_reward, linewidth=2, alpha=0.7, xlims=(0,10))
 end
 
 function create_gif(maps_over_time, pos_over_time, action_over_time; filename="animation.gif", fps=2)
@@ -62,7 +64,7 @@ function create_gif(maps_over_time, pos_over_time, action_over_time; filename="a
 maps_over_time = []
 pos_over_time = []
 action_over_time = []
-final_rewards = []
+reward_over_time = []
 runtimes = []
 
 p = plot(xlabel="Step",
@@ -84,6 +86,6 @@ for truth_map in truth_maps
     end
     push!(runtimes, time)
 end
-savefig("cumulative_rewards.png")
+savefig("total_reward.png")
 
 create_gif(maps_over_time, pos_over_time, action_over_time)
