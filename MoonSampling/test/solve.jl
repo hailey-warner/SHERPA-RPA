@@ -13,7 +13,7 @@ using DiscreteValueIteration
 using SARSOP
 using Plots
 using MoonSampling # user-defined package
-Random.seed!(84)
+Random.seed!(1)
 
 # Example usage
 function simulate_policy(mdp, policy, truth_map; max_steps=30)
@@ -47,7 +47,7 @@ end
 
 function create_gif(maps_over_time, pos_over_time, action_over_time; filename="animation.gif", fps=2)
     anim = @animate for (i, frame) in enumerate(maps_over_time)
-        heatmap(frame, color=:blues, legend=false, yflip=true, axis=true, ticks=true, aspect_ratio=:equal)
+        heatmap(frame, color=:blues, legend=false, yflip=true, axis=false, ticks=false, aspect_ratio=:equal)
         color = :grey
         if action_over_time[i] == 1
             color = :green

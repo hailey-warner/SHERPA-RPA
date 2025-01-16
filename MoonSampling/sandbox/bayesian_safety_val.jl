@@ -69,3 +69,5 @@ function run_single_sample(gp, models, sparams, sample; subdir="test")
     display(plot_soft_boundary(gp, models))
     return gp
 end
+
+end

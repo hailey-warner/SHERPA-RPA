@@ -1,4 +1,5 @@
 # Reward
+
 function POMDPs.reward(mdp::ExtractionMDP, s::ExtractionState, a::Int)
     if isterminal(mdp, s)
         return 0.0
