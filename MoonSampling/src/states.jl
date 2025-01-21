@@ -1,19 +1,19 @@
 # States
 
 function Base.length(mdp::ExtractionMDP) # size of state space
-    return (mdp.map_size[1] * mdp.map_size[2])^3 * 2 * 4
+    return (2*mdp.map_size^2)^3 * 2 * 4 # 3 samples -> ^3
 end
 
 POMDPs.states(mdp::ExtractionMDP) = [
     ExtractionState([i,j], full, collected, [a,b], [c,d])
-    for i in 1:mdp.map_size[1]
-    for j in 1:mdp.map_size[2]
+    for i in 1:mdp.map_size
+    for j in 1:mdp.map_size*2
     for full in [false, true]
     for collected in 0:3
-    for a in 1:mdp.map_size[1]
-    for b in 1:mdp.map_size[2] 
-    for c in 1:mdp.map_size[1]
-    for d in 1:mdp.map_size[2]
+    for a in 1:mdp.map_size
+    for b in 1:mdp.map_size*2
+    for c in 1:mdp.map_size
+    for d in 1:mdp.map_size*2
 ]
 
 POMDPs.initialstate(mdp::ExtractionMDP) = Deterministic(ExtractionState([1, 1], false, 0, [0,0], [1,1]))

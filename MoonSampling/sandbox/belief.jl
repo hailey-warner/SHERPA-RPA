@@ -5,7 +5,7 @@ struct GPBelief
     gp::Any # ElasticGPE
 end
 
-Observations
+# Observations
 POMDPs.observations(mdp::ExtractionMDP) = [true, false]
 
 function POMDPs.observation(mdp::ExtractionMDP, s::ExtractionState, a::Int, sp::ExtractionState)
@@ -23,7 +23,7 @@ function POMDPs.obsindex(mdp::ExtractionMDP, o::Bool)
     return o ? 1 : 2
 end
 
-Belief
+# Belief
 function POMDPs.initialize_belief(up::GPUpdater, d) # d = initial state dist. (unused)
     # create an empty elastic Gaussian process
     x = Matrix{Float64}(undef, 2, 0)  # 2D input space, no points yet

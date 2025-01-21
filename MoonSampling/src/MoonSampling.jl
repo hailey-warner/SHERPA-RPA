@@ -27,7 +27,7 @@ struct ExtractionState
 end
 
 mutable struct ExtractionMDP <: MDP{ExtractionState, Int}
-    map_size::SVector{2, Int}
+    map_size::Int # (n x 2n)
     truth_map::Array{Bool, 2}
 end
 
